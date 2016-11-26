@@ -1,0 +1,25 @@
+*
+{
+    font-family:sans-serif;
+        }
+        body {
+            background-image: url("background.png");
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            border-style: outset;
+            padding: 15px;
+            margin-right: auto;
+            margin-left: auto;
+            max-width: 400px;
+            width: 80%;
+        }
+
+        p {
+            color: red;
+            font-family: calibri;
+            font-size: 20px;
+        }
+
