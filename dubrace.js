@@ -1,9 +1,20 @@
 // Dubrace.js
 
+
+var dancer = new Dancer();
+var audio = new Audio();
+// audio.src = '../../examples/songs/zircon_devils_spirit.mp3';
+audio.src = 'songs/test.mp3';
+dancer.load(audio);
+dancer.play();
+var start_time = new Date();
+
+
 var gameSettings = {
     playerSpeed: 1,
     groundSize: 50,
     groundPrerender: 100, // Number of grounds in front to render
+    groundBaseColor: {red: 155 / 256.0, green: 89/256.0, blue: 182/256.0} // Purple
 }
 
 // Get the canvas element from our HTML above
@@ -54,23 +65,23 @@ var createScene = function () {
     camera.heightOffset = 5;
 
     // Create ground textures
+    var color = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
     for (var i=0; i<gameSettings.groundPrerender; i++) {
         var ng = BABYLON.Mesh.CreateGround("ground1", 6, gameSettings.groundSize, 2, scene);
         ng.position.z = -i * gameSettings.groundSize;
         ng.material = new BABYLON.StandardMaterial("arrowTexture", scene);
-        ng.material.diffuseTexture = new BABYLON.Texture("textures/arrows.jpg", scene);
+        ng.material.diffuseTexture = new BABYLON.Texture("textures/arrows1.png", scene);
         ng.material.diffuseTexture.uScale = 1.0;
         ng.material.diffuseTexture.vScale = 1.0;
+        ng.material.emissiveColor = color;
 
         ground.push(ng);
     }
 
-    // Create action manager
-
     // Leave this function
     return scene;
 
-};  // End of createScene function
+};
 
 // Load the BABYLON 3D engine
 var engine = new BABYLON.Engine(canvas, true);
@@ -94,8 +105,23 @@ engine.runRenderLoop(function () {
         ground.push(og);
     }
 
+    // Update on change of time
+    if ((new Date() - start_time) / 1000.0 > test_times[0]) {
+        test_times.shift();
+        var color = new BABYLON.Color3(
+                (Math.random() + gameSettings.groundBaseColor.red - 0.25)   / 2,
+                (Math.random() + gameSettings.groundBaseColor.green - 0.25) / 2,
+                (Math.random() + gameSettings.groundBaseColor.blue - 0.25)  / 2
+            );
+        ground.forEach(function(og) {
+            og.material.emissiveColor = color;
+        });
+    }
+
     scene.render();
 });
+
+console.log(test_times);
 
 // Watch for browser/canvas resize events
 window.addEventListener("resize", function () {
