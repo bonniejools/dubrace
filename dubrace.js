@@ -3,7 +3,7 @@
 var gameSettings = {
     playerSpeed: 1,
     groundSize: 50,
-    groundPrerender: 3, // Number of grounds in front to render
+    groundPrerender: 100, // Number of grounds in front to render
 }
 
 // Get the canvas element from our HTML above
@@ -12,6 +12,11 @@ var kb = new Keyboard(window);
 
 var player;
 var ground = new Array();
+
+var keys = new Array();
+keys.push({ frame: 0, value: 1 });
+keys.push({ frame: 10, value: 5 });
+keys.push({ frame: 20, value: 1 });
 
 // This begins the creation of a function that we will 'call' just after it's built
 var createScene = function () {
@@ -32,6 +37,17 @@ var createScene = function () {
     player.material = new BABYLON.StandardMaterial("metalTexture", scene);
     player.material.diffuseTexture = new BABYLON.Texture("textures/metal.jpg", scene);
     player.position.y = 1;
+    var animationBox = new BABYLON.Animation("myAnimation",
+            "position.y",
+            30,
+            BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+            BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+    animationBox.setKeys(keys);
+    var easingFunction = new BABYLON.SineEase();
+    easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+    animationBox.setEasingFunction(easingFunction);
+
+    player.animations.push(animationBox);
 
     camera.target = player;
     camera.radius = 20;
@@ -60,6 +76,12 @@ var createScene = function () {
 var engine = new BABYLON.Engine(canvas, true);
 var scene = createScene();
 
+document.addEventListener('keydown', function(event) {
+    if(event.keyCode == 32) {
+        scene.beginAnimation(player, 0, 20, false);
+    }
+});
+
 engine.runRenderLoop(function () {
     // Move player
     player.position.z-=gameSettings.playerSpeed;
@@ -79,3 +101,4 @@ engine.runRenderLoop(function () {
 window.addEventListener("resize", function () {
     engine.resize();
 });
+
