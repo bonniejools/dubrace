@@ -39,7 +39,7 @@ body
   animation-name: bounceInDown;
 }
 
-h1 {
+#header {
     color: white;
     text-align: center;
     text-decoration: underline;
