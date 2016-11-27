@@ -11,10 +11,14 @@ var start_time = new Date();
 
 
 var gameSettings = {
-    playerSpeed: 1,
+    playerSpeed: 2,
     groundSize: 50,
     groundPrerender: 100, // Number of grounds in front to render
-    groundBaseColor: {red: 155 / 256.0, green: 89/256.0, blue: 182/256.0} // Purple
+    groundBaseColor: {red: 142 / 256.0, green: 68/256.0, blue: 173/256.0}, // Purple
+    spectrumPrerender: 256,
+    spectrumSpacing: 10, // space between each spectrum object
+    spectrumRadius: 10, // distance from centre
+    spectrumsPerRot: 16
 }
 
 // Get the canvas element from our HTML above
@@ -23,6 +27,7 @@ var kb = new Keyboard(window);
 
 var player;
 var ground = new Array();
+var spectrum = new Array();
 
 var keys = new Array();
 keys.push({ frame: 0, value: 1 });
@@ -43,7 +48,7 @@ var createScene = function () {
     var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
     light.intensity = .7;
 
-    // Create sphere and ground
+    // Create sphere
     player = BABYLON.Mesh.CreateSphere("sphere", 16, 2, scene);
     player.material = new BABYLON.StandardMaterial("metalTexture", scene);
     player.material.diffuseTexture = new BABYLON.Texture("textures/metal.jpg", scene);
@@ -78,6 +83,23 @@ var createScene = function () {
         ground.push(ng);
     }
 
+    // Create spectrum analyzer
+    for (var i=0; i<gameSettings.spectrumPrerender; i++) {
+        var ns = BABYLON.Mesh.CreateCylinder("cylinder",
+                1, // height
+                3, // diam top
+                3, // diam bottom
+                6, // tesselation
+                1, // height subdivs
+                scene);
+        ns.position.z = -i * gameSettings.spectrumSpacing;
+        var scal_pi = 2 * (Math.PI / gameSettings.spectrumsPerRot) * i;
+        ns.position.x = Math.cos(scal_pi) * gameSettings.spectrumRadius;
+        ns.position.y = Math.sin(scal_pi) * gameSettings.spectrumRadius;
+        ns.rotation = new BABYLON.Vector3(0, 0, scal_pi);
+        spectrum.push(ns);
+    }
+
     // Leave this function
     return scene;
 
@@ -93,6 +115,14 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
+var spectrumAverage = function() {
+    var total = 0.0;
+    dancer.getSpectrum().forEach(function(num) {
+        total += num;
+    });
+    return total / dancer.getSpectrum().length;
+}
+
 engine.runRenderLoop(function () {
     // Move player
     player.position.z-=gameSettings.playerSpeed;
@@ -105,7 +135,7 @@ engine.runRenderLoop(function () {
         ground.push(og);
     }
 
-    // Update on change of time
+    // Update ground color when passing time
     if ((new Date() - start_time) / 1000.0 > test_times[0]) {
         test_times.shift();
         var color = new BABYLON.Color3(
@@ -118,10 +148,24 @@ engine.runRenderLoop(function () {
         });
     }
 
+
+    var specAve = spectrumAverage();
+    spectrum.forEach(function(s) {
+        s.scaling.y = spectrumAverage() * 300; // Scale it up
+    });
+
+    // Calculate whether to shift spectrum. We only do this every rotation
+    if (spectrum[gameSettings.spectrumsPerRot - 1].position.z - player.position.z > 0) {
+        for (var i=0; i<gameSettings.spectrumsPerRot; i++) {
+            var last_z = spectrum[spectrum.length - 1].position.z;
+            var sp = spectrum.shift();
+            sp.position.z = last_z - gameSettings.spectrumSpacing;
+            spectrum.push(sp);
+        }
+    }
+
     scene.render();
 });
-
-console.log(test_times);
 
 // Watch for browser/canvas resize events
 window.addEventListener("resize", function () {
