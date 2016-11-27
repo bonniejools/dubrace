@@ -5,7 +5,7 @@
         <script>
             function thing(pos)
             {
-                var ar = ["back","bottom","right","top","left","front"];
+                var ar = ["right","bottom","back","left","top","front"];
                 setTimeout(function(){document.getElementById("cube").className = "show-"+ar[pos]
                         pos == 5 ? thing(0) : thing(pos+1);
                     },2000);
@@ -14,17 +14,17 @@
     </head>
     <body onload="thing(0)">
 
-        <h1 id="header">Dubrace: AudioCrusader</h1>
+        <h1 id="header">V.A.X:  Visual Audio Xperience</h1>
         <br/><br/><br/><br/><br/><br/>
         <section class="container">
         <div id="cube">
 
-            <figure class="front">1</figure>
-            <figure class="back">2</figure>
-            <figure class="right">3</figure>
-            <figure class="left">4</figure>
-            <figure class="top">5</figure>
-            <figure class="bottom">6</figure>
+            <figure class="front">V</figure>
+            <figure class="back">V</figure>
+            <figure class="right">A</figure>
+            <figure class="left">A</figure>
+            <figure class="top">X</figure>
+            <figure class="bottom">X</figure>
 
         </div>
         </section>
