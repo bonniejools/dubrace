@@ -9,6 +9,35 @@ dancer.load(audio);
 dancer.play();
 var start_time = new Date();
 
+
+    var canKick = true;
+    kick = dancer.createKick({
+        onKick: function ( mag ) {
+            kick.threshold = 0.42;
+            kick.decay = 0.02;
+            if(canKick == true)
+            {
+                do {
+                    var color = getColor();
+                }
+                while(color == current_ground_color);
+
+                current_ground_color = color;
+                ground.forEach(function(og) {
+                    og.material.emissiveColor = color;
+                });
+
+                console.log('Kick!');
+                canKick = false;
+
+                setTimeout(function(){canKick = true},200)
+            }
+        },
+
+    });
+
+    kick.on();
+
 var gameSettings = {
     playerSpeed: 2,
     groundSize: 50,
@@ -233,18 +262,6 @@ engine.runRenderLoop(function () {
         test_times.shift();
         
         // Probably wrong
-        do {
-            var color = getColor();
-        }
-        while(color == current_ground_color);
-
-        console.log(color);
-
-        current_ground_color = color;
-        ground.forEach(function(og) {
-            og.material.emissiveColor = color;
-        });
-
         if (shake_on_next_drop) {
             shake_on_next_drop = false;
             camera_shake_frames = 300;
