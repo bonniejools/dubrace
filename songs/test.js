@@ -5,6 +5,8 @@ Dancer.setOptions({
 });
 
 var kickTime = [];
+var beatFreq = [];
+var spectrum = [];
 
 dancer = new Dancer();
 
@@ -20,18 +22,21 @@ kick = dancer.createKick({
         kick.decay = 0.02;
         if(canKick == true)
         {
-            function goRed() {
-                document.body.style.backgroundColor = "red";
-            }
             console.log('Kick!');
             console.log(kick.currentThreshold);
             kickTime.push(dancer.getTime());
-            console.log(kickTime);
+            spectrum = dancer.getSpectrum();
+
+            var counter = 0;
+            for(var i = 0; i < 512; i++) {
+                counter += spectrum[i];
+            }
+            counter = counter / 512;
+            beatFreq.push(counter);
+            // console.log(beatFreq);
+            // console.log(kickTime);
             canKick = false;
 
-            function goWhite() {
-                document.body.style.backgroundColor = "white";
-            }
             setTimeout(function(){canKick = true},200)
         }
     },
@@ -47,23 +52,26 @@ kick.on();
 dancer.play();
 
 audio.onended = function(){
-    var i = 1;                                                                                                                   
-    var x = 0; //array position for transition                                                                                   
+    var i = 1;                                                                                                        
+    var x = 0; //array position for transition                                                                               
 
 var transitionTimes = {};                                                                                                    
 
-for(i; i < kickTime.length; i++) {                                                                                           
-    if (kickTime[i]-kickTime[i-1] > 10)                                                                                      
-    { 
-        transitionTimes[x] = {startTime: kickTime[i-1], endTime: kickTime[i]};
+for(i; i < kickTime.length; i++) {                   
+    if (kickTime[i]-kickTime[i-1] > 10) { 
+        // transitionTimes[x] = {startTime: kickTime[i-1], endTime: kickTime[i]};
+        var averageDrop = 0;
+        for(var j = 0; j < 5; j++) { //average for next 5 values
+            averageDrop += beatFreq[i];
+            i++;
+        }
+        i = i -5;
+        averageDrop = averageDrop / 5;
+        transitionTimes[x] = {startTime: kickTime[i-1], endTime: kickTime[i], dropScore: averageDrop};
         x++; 
     }                                                                                                                        
 }                                                                                                                            
+
 console.log(transitionTimes);                                                                                            
 
-function getdropPoints(endTime) {
-    if (getTime() == endTime) {
-        console.log("drop begins at " + getTime());
-    }
-}
 }
