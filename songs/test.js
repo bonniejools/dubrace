@@ -10,7 +10,7 @@ dancer = new Dancer();
 
 var audio = new Audio();
 // audio.src = '../../examples/songs/zircon_devils_spirit.mp3';
-audio.src = '../../examples/songs/test.mp3';
+audio.src = './test.mp3';
 dancer.load(audio);
 
 var canKick = true;
@@ -20,12 +20,19 @@ kick = dancer.createKick({
         kick.decay = 0.02;
         if(canKick == true)
         {
-        console.log('Kick!');
-        console.log(kick.currentThreshold);
-        kickTime.push(dancer.getTime());
-        console.log(kickTime);
-        canKick = false;
-        setTimeout(function(){canKick = true},200)
+            function goRed() {
+                document.body.style.backgroundColor = "red";
+            }
+            console.log('Kick!');
+            console.log(kick.currentThreshold);
+            kickTime.push(dancer.getTime());
+            console.log(kickTime);
+            canKick = false;
+
+            function goWhite() {
+                document.body.style.backgroundColor = "white";
+            }
+            setTimeout(function(){canKick = true},200)
         }
     },
 
@@ -39,5 +46,24 @@ kick.on();
 
 dancer.play();
 
-audio.onended = function(){console.log("The array is complete");};
+audio.onended = function(){
+    var i = 1;                                                                                                                   
+    var x = 0; //array position for transition                                                                                   
 
+var transitionTimes = {};                                                                                                    
+
+for(i; i < kickTime.length; i++) {                                                                                           
+    if (kickTime[i]-kickTime[i-1] > 10)                                                                                      
+    { 
+        transitionTimes[x] = {startTime: kickTime[i-1], endTime: kickTime[i]};
+        x++; 
+    }                                                                                                                        
+}                                                                                                                            
+console.log(transitionTimes);                                                                                            
+
+function getdropPoints(endTime) {
+    if (getTime() == endTime) {
+        console.log("drop begins at " + getTime());
+    }
+}
+}
