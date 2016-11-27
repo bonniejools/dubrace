@@ -39,10 +39,14 @@ body
   animation-name: bounceInDown;
 }
 
+a {
+        color: white;
+        text-decoration: none;
+}
+
 #header {
     color: white;
     text-align: center;
-    text-decoration: underline;
     border-style: outset;
     padding: 15px;
     margin-right: auto;
@@ -183,7 +187,7 @@ body
 #cube.show-top    { transform: translateZ( -100px ) rotateX(  -90deg ); }
 #cube.show-bottom { transform: translateZ( -100px ) rotateX(   90deg ); }
 
-#cube { transition: transform 2s; }
+#cube { transition: transform 1s; }
 
 
 
