@@ -10,7 +10,7 @@ dancer = new Dancer();
 
 var audio = new Audio();
 // audio.src = '../../examples/songs/zircon_devils_spirit.mp3';
-audio.src = '../../examples/songs/test.mp3';
+audio.src = './test.mp3';
 dancer.load(audio);
 
 var canKick = true;
