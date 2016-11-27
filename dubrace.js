@@ -182,6 +182,7 @@ var spectrumAverage = function() {
 }
 
 var camera_shake_frames = 0;
+var shake_on_next_drop = false;
 
 engine.runRenderLoop(function () {
     // Move player
@@ -202,6 +203,14 @@ engine.runRenderLoop(function () {
         ground.forEach(function(og) {
             og.material.emissiveColor = color;
         });
+
+        if (shake_on_next_drop) {
+            shake_on_next_drop = false;
+            camera_shake_frames = 300;
+        }
+
+        if (test_times.length && test_times[0] > dancer.getTime() + 10)
+            shake_on_next_drop = true;
     }
 
     if (camera_shake_frames) {
@@ -213,6 +222,7 @@ engine.runRenderLoop(function () {
         if (camera_shake_frames == 1) {
             camera.radius = 20;
             camera.heightOffset = 5;
+            camera.rotationOffset = 720;
         }
         camera_shake_frames--;
     }
