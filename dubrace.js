@@ -4,39 +4,43 @@
 var dancer = new Dancer();
 var audio = new Audio();
 // audio.src = '../../examples/songs/zircon_devils_spirit.mp3';
-audio.src = 'songs/avicii.mp3';
+audio.src = 'songs/test.mp3';
 dancer.load(audio);
 dancer.play();
 var start_time = new Date();
 
 
-    var canKick = true;
-    kick = dancer.createKick({
-        onKick: function ( mag ) {
-            kick.threshold = 0.42;
-            kick.decay = 0.02;
-            if(canKick == true)
-            {
-                do {
-                    var color = getColor();
-                }
-                while(color == current_ground_color);
+// Dancer.js kick analysis code
+var shake_on_next_drop = false;
+var canKick = true;
+var lastDropTime;
 
-                current_ground_color = color;
-                ground.forEach(function(og) {
-                    og.material.emissiveColor = color;
-                });
-
-                console.log('Kick!');
-                canKick = false;
-
-                setTimeout(function(){canKick = true},200)
+kick = dancer.createKick({
+    onKick: function ( mag ) {
+        kick.threshold = 0.42;
+        kick.decay = 0.02;
+        if(canKick == true)
+        {
+            if (lastDropTime && dancer.getTime() - lastDropTime > 10) {
+                camera_shake_frames = 300;
             }
-        },
+            lastDropTime = dancer.getTime();
+
+            var color = getColor();
+            ground.forEach(function(og) {
+                og.material.emissiveColor = color;
+            });
 
-    });
+            console.log('Kick!');
+            canKick = false;
 
-    kick.on();
+            setTimeout(function(){canKick = true},200)
+        }
+    },
+
+});
+
+kick.on();
 
 var gameSettings = {
     playerSpeed: 2,
@@ -235,8 +239,6 @@ var spectrumAverage = function() {
 }
 
 var camera_shake_frames = 0;
-var shake_on_next_drop = false;
-var current_ground_color;
 
 engine.runRenderLoop(function () {
     // Move player
@@ -255,20 +257,6 @@ engine.runRenderLoop(function () {
         var og = ground.shift();
         og.position.z = ground[ground.length-1].position.z - gameSettings.groundSize;
         ground.push(og);
-    }
-
-    // Update ground color when passing time
-    if (dancer.getTime() > test_times[0]) {
-        test_times.shift();
-        
-        // Probably wrong
-        if (shake_on_next_drop) {
-            shake_on_next_drop = false;
-            camera_shake_frames = 300;
-        }
-
-        if (test_times.length && test_times[0] > dancer.getTime() + 10)
-            shake_on_next_drop = true;
     }
 
     if (camera_shake_frames) {
