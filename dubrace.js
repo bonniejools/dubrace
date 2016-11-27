@@ -4,7 +4,7 @@
 var dancer = new Dancer();
 var audio = new Audio();
 // audio.src = '../../examples/songs/zircon_devils_spirit.mp3';
-audio.src = 'songs/test.mp3';
+audio.src = 'songs/avicii.mp3';
 dancer.load(audio);
 dancer.play();
 var start_time = new Date();
