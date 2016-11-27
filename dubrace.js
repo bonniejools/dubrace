@@ -9,7 +9,6 @@ dancer.load(audio);
 dancer.play();
 var start_time = new Date();
 
-
 var gameSettings = {
     playerSpeed: 2,
     groundSize: 50,
@@ -18,7 +17,8 @@ var gameSettings = {
     spectrumPrerender: 256, // how many of spectrums to prerender
     spectrumSpacing: 10, // space between each spectrum object
     spectrumRadius: 10, // distance from centre
-    spectrumsPerRot: 16
+    spectrumsPerRot: 16,
+    fountainNum: 3,
 }
 
 // Get the canvas element from our HTML above
@@ -30,6 +30,7 @@ var ground = new Array();
 var spectrum = new Array();
 var skybox;
 var camera;
+var fountain = new Array();
 
 // Key frames for ball jump
 var keys = new Array();
@@ -79,7 +80,7 @@ var createScene = function () {
 
     // Create lights
     var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
-    light.intensity = .7;
+    light.intensity = .5;
 
     // Create skybox
     skybox = BABYLON.Mesh.CreateBox("skyBox", 100.0, scene);
@@ -150,8 +151,31 @@ var createScene = function () {
         ns.renderingGroupId = 1;
 
         ns.material = new BABYLON.StandardMaterial("spectrumTexture", scene);
-        ns.material.diffuseColor = getColor();//new BABYLON.Color3(46, 204, 113);
+        ns.material.emissiveColor = getColor();//new BABYLON.Color3(46, 204, 113);
         spectrum.push(ns);
+    }
+
+    // Create particle effects
+    //
+    for (var i=0; i<gameSettings.fountainNum; i++) {
+        nf = BABYLON.Mesh.CreateBox("fountain", 1.0, scene);
+        var particleSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
+        particleSystem.particleTexture = new BABYLON.Texture("textures/metal.jpg", scene);
+        //particleSystem.textureMask = new BABYLON.Color4(0.1, 0.8, 0.8, 1.0);
+        // Colors of all particles (splited in 2 + specific color before dispose)
+        particleSystem.color1 = new BABYLON.Color4(1.0, 0.8, 1.0, 1.0);
+        particleSystem.color2 = new BABYLON.Color4(1.0, 0.5, 1.0, 1.0);
+        particleSystem.colorDead = new BABYLON.Color4(0, 0, 0.2, 0.0);
+        particleSystem.emitRate = 1000;
+        particleSystem.minLifeTime = 4;
+        particleSystem.maxLifeTime = 8;
+
+        particleSystem.emitter = nf;
+        particleSystem.start();
+        nf.position.x = 5;
+        nf.position.z = -200;
+
+        fountain.push(nf);
     }
 
     // Set the fog
@@ -189,6 +213,13 @@ engine.runRenderLoop(function () {
     player.position.z-=gameSettings.playerSpeed;
     player.rotation.x-=0.2;
 
+    fountain.forEach(function(f, index) {
+        f.position.z -=gameSettings.playerSpeed;
+        var t_val = dancer.getTime() + (2 * index / gameSettings.fountainNum) * Math.PI;
+        f.position.x = 15 * Math.cos(t_val);
+        f.position.y = 15 * Math.sin(t_val);
+    });
+
     // Shift old ground tile to front
     if (player.position.z < ground[0].position.z - gameSettings.groundSize) {
         var og = ground.shift();
@@ -198,8 +229,10 @@ engine.runRenderLoop(function () {
 
     // Update ground color when passing time
     if (dancer.getTime() > test_times[0]) {
+        console.log("kick right now!");
         test_times.shift();
         var color = getColor();
+
         ground.forEach(function(og) {
             og.material.emissiveColor = color;
         });
