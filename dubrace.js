@@ -28,6 +28,8 @@ var kb = new Keyboard(window);
 var player;
 var ground = new Array();
 var spectrum = new Array();
+var skybox;
+var camera;
 
 // Key frames for ball jump
 var keys = new Array();
@@ -73,14 +75,14 @@ var createScene = function () {
     scene.clearColor = new BABYLON.Color3(1, 1, 1);
 
     // Set camera
-    var camera = new BABYLON.FollowCamera("FollowCam", new BABYLON.Vector3(0, 4, 12), scene);
+    camera = new BABYLON.FollowCamera("FollowCam", new BABYLON.Vector3(0, 4, 12), scene);
 
     // Create lights
     var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
     light.intensity = .7;
 
     // Create skybox
-    var skybox = BABYLON.Mesh.CreateBox("skyBox", 100.0, scene);
+    skybox = BABYLON.Mesh.CreateBox("skyBox", 100.0, scene);
     var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
     skyboxMaterial.backFaceCulling = false;
     skyboxMaterial.disableLighting = true;
@@ -122,10 +124,10 @@ var createScene = function () {
         var ng = BABYLON.Mesh.CreateGround("ground1", 6, gameSettings.groundSize, 2, scene);
         ng.position.z = -i * gameSettings.groundSize;
         ng.material = new BABYLON.StandardMaterial("arrowTexture", scene);
-        ng.material.diffuseTexture = new BABYLON.Texture("textures/arrows1.png", scene);
-        ng.material.diffuseTexture.uScale = 1.0;
-        ng.material.diffuseTexture.vScale = 1.0;
-        ng.material.emissiveColor = color;
+        ng.material.emissiveTexture = new BABYLON.Texture("textures/arrows1.png", scene);
+        ng.material.emissiveTexture.uScale = 1.0;
+        ng.material.emissiveTexture.vScale = 1.0;
+        ng.material.diffuseColor = color;
         ng.renderingGroupId = 1;
 
         ground.push(ng);
@@ -144,8 +146,11 @@ var createScene = function () {
         var scal_pi = 2 * (Math.PI / gameSettings.spectrumsPerRot) * i;
         ns.position.x = Math.cos(scal_pi) * gameSettings.spectrumRadius;
         ns.position.y = Math.sin(scal_pi) * gameSettings.spectrumRadius;
-        ns.rotation = new BABYLON.Vector3(0, 0, scal_pi);
+        ns.rotation = new BABYLON.Vector3(-Math.PI / 4, 0, scal_pi);
         ns.renderingGroupId = 1;
+
+        ns.material = new BABYLON.StandardMaterial("spectrumTexture", scene);
+        ns.material.diffuseColor = getColor();//new BABYLON.Color3(46, 204, 113);
         spectrum.push(ns);
     }
 
@@ -204,7 +209,7 @@ engine.runRenderLoop(function () {
     });
 
     // Calculate whether to shift spectrum. We only do this every rotation
-    if (spectrum[gameSettings.spectrumsPerRot - 1].position.z - player.position.z > 0) {
+    if (spectrum[gameSettings.spectrumsPerRot + 2].position.z - player.position.z > 0) {
         for (var i=0; i<gameSettings.spectrumsPerRot; i++) {
             var last_z = spectrum[spectrum.length - 1].position.z;
             var sp = spectrum.shift();
@@ -212,6 +217,9 @@ engine.runRenderLoop(function () {
             spectrum.push(sp);
         }
     }
+
+    if (camera.rotationOffset < 360)
+        camera.rotationOffset++;
 
     scene.render();
 });
