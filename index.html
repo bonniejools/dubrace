@@ -1,32 +1,34 @@
+<!DOCTYPE html>
 <html>
     <head>
-        <title>Dubrace -- play against your music!</title>
-        <script src="libs/babylon.custom.js"></script>
-        <script src="libs/hand.js"></script>
-        <script src="libs/Keyboard.js"></script>
-        <script src="libs/dancer.min.js"></script>
-        <script src="libs/kick.js"></script>
-        <script src="libs/testdata.js"></script>
-        <script src="libs/glfx.js"></script>
-	<style>
-	  html, body {
-	    overflow: hidden;
-	    width: 100%;
-	    height: 100%;
-	    margin: 0;
-	    padding: 0;
-	  }
-
-	  #renderCanvas {
-	    width: 100%;
-	    height: 100%;
-	    touch-action: none;
-	  }
-	</style>
+        <link rel = "stylesheet" type = "text/css" href="styleshit.css">
+        <script>
+            function thing(pos)
+            {
+                var ar = ["right","bottom","back","left","top","front"];
+                setTimeout(function(){document.getElementById("cube").className = "show-"+ar[pos]
+                        pos == 5 ? thing(0) : thing(pos+1);
+                    },2000);
+            }
+        </script>
     </head>
-    <body>
-	<canvas id="renderCanvas"></canvas>
-        <script src="dubrace.js"></script>
+    <body onload="thing(0)">
+
+        <h1 id="header">V.A.X:  Visual Audio Xperience</h1>
+        <br/><br/><br/><br/><br/><br/>
+        <section class="container">
+        <div id="cube">
+
+            <figure class="front"><a href="game.html">V</a></figure>
+            <figure class="back"><a href="game.html">V</a></figure>
+            <figure class="right"><a href="game.html">A</a></figure>
+            <figure class="left"><a href="game.html">A</a></figure>
+            <figure class="top"><a href="game.html">X</a></figure>
+            <figure class="bottom"><a href="game.html">X</a></figure>
+
+        </div>
+        <h1 id="footnote"> Click on cube to proceed</h1>
+        </section>
+
     </body>
 </html>
-
