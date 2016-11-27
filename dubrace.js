@@ -207,6 +207,7 @@ var spectrumAverage = function() {
 
 var camera_shake_frames = 0;
 var shake_on_next_drop = false;
+var current_ground_color;
 
 engine.runRenderLoop(function () {
     // Move player
@@ -229,10 +230,17 @@ engine.runRenderLoop(function () {
 
     // Update ground color when passing time
     if (dancer.getTime() > test_times[0]) {
-        console.log("kick right now!");
         test_times.shift();
-        var color = getColor();
+        
+        // Probably wrong
+        do {
+            var color = getColor();
+        }
+        while(color == current_ground_color);
 
+        console.log(color);
+
+        current_ground_color = color;
         ground.forEach(function(og) {
             og.material.emissiveColor = color;
         });
