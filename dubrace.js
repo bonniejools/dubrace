@@ -181,6 +181,8 @@ var spectrumAverage = function() {
     return total / dancer.getSpectrum().length;
 }
 
+var camera_shake_frames = 0;
+
 engine.runRenderLoop(function () {
     // Move player
     player.position.z-=gameSettings.playerSpeed;
@@ -194,12 +196,25 @@ engine.runRenderLoop(function () {
     }
 
     // Update ground color when passing time
-    if ((new Date() - start_time) / 1000.0 > test_times[0]) {
+    if (dancer.getTime() > test_times[0]) {
         test_times.shift();
         var color = getColor();
         ground.forEach(function(og) {
             og.material.emissiveColor = color;
         });
+    }
+
+    if (camera_shake_frames) {
+        camera.radius = 8 + 4 * Math.random();
+        camera.heightOffset = Math.random()*20;
+        camera.rotationOffset = 660 + Math.random() * 120;
+
+        // Reset camera
+        if (camera_shake_frames == 1) {
+            camera.radius = 20;
+            camera.heightOffset = 5;
+        }
+        camera_shake_frames--;
     }
 
 
