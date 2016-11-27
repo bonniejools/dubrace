@@ -8,40 +8,106 @@ body
 }
 
 @keyframes bounceInDown {
-  from, 60%, 75%, 90%, to {
-    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    from, 60%, 75%, 90%, to {
+        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
   }
 
   0% {
-    opacity: 0;
-    transform: translate3d(0, -3000px, 0);
+      opacity: 0;
+      transform: translate3d(0, -3000px, 0);
   }
 
   60% {
-    opacity: 1;
-    transform: translate3d(0, 25px, 0);
+      opacity: 1;
+      transform: translate3d(0, 25px, 0);
   }
 
   75% {
-    transform: translate3d(0, -10px, 0);
+      transform: translate3d(0, -10px, 0);
   }
 
   90% {
-    transform: translate3d(0, 5px, 0);
+      transform: translate3d(0, 5px, 0);
   }
 
   to {
-    transform: none;
+      transform: none;
   }
 }
 
 .bounceInDown {
-  animation-name: bounceInDown;
+    animation-name: bounceInDown;
+}
+
+@keyframes rubberBand {
+    from {
+        transform: scale3d(1, 1, 1);
+  }
+
+  30% {
+      transform: scale3d(1.25, 0.75, 1);
+  }
+
+  40% {
+      transform: scale3d(0.75, 1.25, 1);
+  }
+
+  50% {
+      transform: scale3d(1.15, 0.85, 1);
+  }
+
+  65% {
+      transform: scale3d(.95, 1.05, 1);
+  }
+
+  75% {
+      transform: scale3d(1.05, .95, 1);
+  }
+
+  to {
+      transform: scale3d(1, 1, 1);
+  }
+}
+
+.rubberBand {
+    animation-name: rubberBand;
+}
+
+@keyframes bounceInUp {
+  from, 60%, 75%, 90%, to {
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+  }
+
+  from {
+    opacity: 0;
+    transform: translate3d(0, 3000px, 0);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translate3d(0, -20px, 0);
+  }
+
+  75% {
+    transform: translate3d(0, 10px, 0);
+  }
+
+  90% {
+    transform: translate3d(0, -5px, 0);
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.bounceInUp {
+  animation-name: bounceInUp;
 }
 
 a {
-        color: white;
-        text-decoration: none;
+    color: white;
+    text-decoration: none;
 }
 
 #header {
@@ -55,6 +121,13 @@ a {
     width: 80%;
     animation-name: bounceInDown;
     animation-duration: 2s;
+}
+
+#footnote {
+    margin-top: 300px;
+        text-align: center;
+        animation-name: bounceInUp;
+        animation-duration: 2s;
 }
 
 .container {
@@ -85,6 +158,9 @@ a {
     font-weight: bold;
     color: white;
     text-align: center;
+    animation-name: rubberBand;
+    animation-duration: 1s;
+
 }
 
 #cube .front {
