@@ -56,7 +56,7 @@ var gameSettings = {
 
 // Get the canvas element from our HTML above
 var canvas = document.getElementById("renderCanvas");
-var kb = new Keyboard(window);
+//var kb = new Keyboard(window);
 
 var player;
 var ground = new Array();
